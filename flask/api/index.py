@@ -22,9 +22,9 @@ def upload_file():
            image_type = image.format
 
            # 在这里添加处理图片的逻辑，例如：  
-           # image = image.filter(ImageFilter.GaussianBlur(10))  # 模糊处理  
-           # image = image.point(lambda i: i * 0.5)  # 加噪处理  
-           # image = image.convert('L')  # 灰度化处理
+           image = image.filter(ImageFilter.GaussianBlur(10))  # 模糊处理  
+           image = image.point(lambda i: i * 0.5)  # 加噪处理  
+           image = image.convert('L')  # 灰度化处理
 
            image.save(upload_path)  
            upload.save(upload_path)  
