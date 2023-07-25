@@ -1,15 +1,79 @@
-<!DOCTYPE html>  
-<html>  
-<head>  
-   <title>图片处理示例</title>  
-</head>  
-<body>  
-   <h1>图片处理示例</h1>  
-   <form action='/upload' method='post' enctype='multipart/form-data'>  
-       <input type='file' name='file' />  
-       <button type='submit'>上传图片</button>  
-   </form>  
-   <hr>  
-   <a href='/download/{{ filename }}'>下载图片</a>  
-</body>  
-</html>  
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Image Processing App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .error {
+            color: red;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input[type="file"] {
+            display: none;
+        }
+
+        .form-group .btn {
+            display: inline-block;
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Image Processing App</h1>
+
+    {% if error %}
+    <p class="error">{{ error }}</p>
+    {% endif %}
+
+    <form method="POST" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="image">Select an image:</label>
+            <input type="file" id="image" name="image" accept="image/*" required>
+            <label for="image" class="btn">Browse</label>
+        </div>
+
+        <div class="form-group">
+            <label for="operation">Select an operation:</label>
+            <select id="operation" name="operation">
+                <option value="noise">Add Noise</option>
+                <option value="grayscale">Grayscale</option>
+                <option value="blur">Blur</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <input type="submit" value="Process">
+        </div>
+    </form>
+</div>
+</body>
+</html>
