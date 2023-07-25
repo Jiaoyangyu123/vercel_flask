@@ -1,51 +1,33 @@
-from flask import Flask, render_template, flash, request, redirect, url_for, send_file  
-from flask_uploads import UploadSet, IMAGES, configure_uploads  
-import os  
-from PIL import Image, ImageFilter
+from flask import Flask, render_template
+from flask_jinja2 import Jinja2Templates
+import os
+import sqlite3
+import numpy as np
+import cv2
 
-app = Flask(__name__)  
-app.config['UPLOAD_FOLDER'] = 'uploads'  
-app.config['ALLOWED_EXTENSIONS'] = set(['jpg', 'jpeg', 'png', 'gif'])
-photos = UploadSet('photos', IMAGES)
-configure_uploads(app, photos)
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sample.db'
+app.config['JINJA2_template_folder'] = 'templates'
+templates = Jinja2Templates(app)
 
-@app.route('/')  
-def welcome():  
+@app.route('/')
+def welcome():
     return render_template('welcome.html')
 
-@app.route('/upload', methods=['POST'])  
-def upload_file():  
-    if 'file' not in request.files:  
-        flash('请选择图片！')  
-        return redirect(url_for('welcome'))
+@app.route('/upload', methods=['POST'])
+def upload():
+    # 获取上传的图片
+    file = request.files.get('image')
+    if file:
+        # 图片处理
+        img = cv2.imread(file.stream)
+        img_noisy = cv2.addWeighted(img, 0.1, np.zeros(img.shape), 0.1, 0)
+        img_gray = cv2.cvtColor(img_noisy, cv2.COLOR_BGR2GRAY)
+        img_blur = cv2.GaussianBlur(img_gray, (3, 3), 0)
+        img_fuzzy = cv2.FuzzyCategorization(img_blur, 20, 0.7, 0.3, 20)
+        # 保存处理后的图片
+        file.save('processed.jpg')
+    return render_template('upload.html', success=True)
 
-    file = request.files['file']
-    if file.filename == '':  
-        flash('请选择图片！')  
-        return redirect(url_for('welcome'))
-
-    filename = photos.save(file)
-    upload_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)  
-    image = Image.open(file.stream)  
-    image_type = image.format
-
-    # 在这里添加处理图片的逻辑，例如：  
-    image = image.filter(ImageFilter.GaussianBlur(10))  # 模糊处理  
-    image = image.point(lambda i: i * 0.5)  # 加噪处理  
-    image = image.convert('L')  # 灰度化处理
-
-    image.save(upload_path)  
-    flash('图片上传成功！')  
-    return redirect(url_for('welcome'))
-
-@app.route('/download/<filename>')  
-def download_file(filename):  
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)  
-    if os.path.exists(file_path):  
-        return send_file(file_path, mimetype='image/jpeg')  
-    else:  
-        flash('文件不存在！')  
-        return redirect(url_for('welcome'))
-
-if __name__ == '__main__':  
+if __name__ == '__main__':
     app.run(debug=True)
