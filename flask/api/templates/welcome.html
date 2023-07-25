@@ -1,27 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>欢迎来到我的 Flask 网页！</title>
+    <title>Welcome</title>
     <style>
-    body { background-color: #f0f0f0; font-family: Arial, sans-serif; margin: 0; padding: 0; }
-    .container {
-        width: 80%;
-        margin: auto;
-        padding: 50px;
-        text-align: center;
-        border-radius: 10px;
-        border: 1px solid #ccc;
-    }
-    
-    h1 {
-        color: #333;
-    }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input[type="text"] {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+        }
+        .form-group button {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        .form-group button:hover {
+            background-color: #0056B3;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>欢迎来到我的 Flask 网页！</h1>
+        <h1>Welcome to Flask App</h1>
+        <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label>Choose image</label>
+                <input type="file" name="image">
+            </div>
+            <button type="submit">Upload</button>
+        </form>
     </div>
 </body>
 </html>
